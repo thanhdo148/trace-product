@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract ProductTrace {
+
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    struct Product {
+        string name;
+        string origin;
+        string manufactureDate;
+        string company;
+        bool exists;
+    }
+
+    mapping(string => Product) private products;
+    mapping(address => bool) public authorizedCompanies;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    modifier onlyAuthorized() {
+        require(authorizedCompanies[msg.sender], "Ban chua duoc cap quyen doanh nghiep!");
+        _;
+    }
+
+    function authorizeCompany(address _company) public onlyOwner {
+        authorizedCompanies[_company] = true;
+    }
+
+    function addProduct(
+        string memory _code,
+        string memory _name,
+        string memory _origin,
+        string memory _date,
+        string memory _company
+    ) public onlyAuthorized {
+
+        require(!products[_code].exists, "San Pham Da Ton Tai!");
+
+        products[_code] = Product(
+            _name,
+            _origin,
+            _date,
+            _company,
+            true
+        );
+    }
+
+    function getProduct(string memory _code)
+        public
+        view
+        returns (
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            bool
+        )
+    {
+        Product memory p = products[_code];
+        return (
+            p.name,
+            p.origin,
+            p.manufactureDate,
+            p.company,
+            p.exists
+        );
+    }
+}

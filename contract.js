@@ -1,25 +1,35 @@
 require("dotenv").config();
 const { ethers } = require("ethers");
 
-// Provider
+// ==============================
+// 1️⃣ PROVIDER (Sepolia RPC)
+// ==============================
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
-// Wallet
+// ==============================
+// 2️⃣ WALLET (Private key)
+// ==============================
 const wallet = new ethers.Wallet(
   process.env.PRIVATE_KEY,
   provider
 );
 
-// Contract address
+// ==============================
+// 3️⃣ CONTRACT ADDRESS
+// ==============================
 const contractAddress = process.env.CONTRACT_ADDRESS;
 
-// ABI
+// ==============================
+// 4️⃣ ABI (FULL PRODUCT VERSION)
+// ==============================
 const contractABI = [
-  "function addProduct(string code, string hash)",
-  "function getProduct(string code) view returns (string)"
+  "function addProduct(string _code,string _name,string _origin,string _manufactureDate,string _company)",
+  "function getProduct(string _code) view returns (string name,string origin,string manufactureDate,string company,bool exists)"
 ];
 
-// Contract instance
+// ==============================
+// 5️⃣ CONTRACT INSTANCE
+// ==============================
 const contract = new ethers.Contract(
   contractAddress,
   contractABI,
