@@ -74,3 +74,7 @@ contract ProductTrace {
         );
     }
 }
+Contract Name: ProductTraceCapQuyen.sol
+Network: Sepolia
+Contract Address: 0x10C1Ccb320A5B55792066105D2926Ed0c6BC1789
+Deployed Date: 06/02/2026
