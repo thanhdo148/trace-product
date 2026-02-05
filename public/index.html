@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hệ thống truy xuất nguồn gốc</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    background:#ffffff;
+    min-height:100vh;
+}
+
+/* HEADER */
+header{
+    background:#ffffff;
+    padding:28px;
+    text-align:center;
+    font-size:22px;
+    font-weight:600;
+    color:#111827;
+    border-bottom:1px solid #f1f1f1;
+}
+
+/* CARD */
+.container{
+    width:520px;
+    margin:70px auto;
+    padding:45px;
+    border-radius:18px;
+    background:#ffffff;
+    box-shadow:0 25px 60px rgba(0,0,0,0.06);
+    transition:0.3s;
+}
+
+h2{
+    margin-bottom:25px;
+    font-weight:600;
+    font-size:20px;
+    color:#111827;
+}
+
+/* INPUT */
+input{
+    width:100%;
+    padding:15px;
+    margin-bottom:16px;
+    border-radius:14px;
+    border:1px solid #e5e7eb;
+    font-size:14px;
+    transition:0.2s;
+    background:#f9fafb;
+}
+
+input:focus{
+    outline:none;
+    border:1px solid #2563eb;
+    background:white;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* PRIMARY BUTTON */
+.btn-primary{
+    width:100%;
+    padding:15px;
+    border-radius:14px;
+    border:none;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+    transition:0.3s;
+}
+
+.btn-primary:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+
+/* BUSINESS BUTTON (BLACK) */
+.btn-business{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    border-radius:14px;
+    border:none;
+    background:#000000;
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn-business:hover{
+    background:#111111;
+    transform:translateY(-2px);
+}
+
+/* RESULT BOX */
+.result-box{
+    margin-top:25px;
+    padding:22px;
+    border-radius:16px;
+    font-size:14px;
+    line-height:1.8;
+}
+
+/* SUCCESS */
+.success{
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+}
+
+/* ERROR */
+.error{
+    background:#fef2f2;
+    border:1px solid #fecaca;
+}
+
+/* WARNING */
+.warning{
+    background:#fffbeb;
+    border:1px solid #fde68a;
+}
+
+.result-box h3{
+    margin-bottom:14px;
+    font-weight:600;
+}
+
+/* LINK */
+.link{
+    display:block;
+    margin-top:14px;
+    color:#2563eb;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.link:hover{
+    text-decoration:underline;
+}
+
+.hidden{
+    display:none;
+}
+</style>
+
+
+
+
+</head>
+<body>
+
+<header>HỆ THỐNG TRUY XUẤT NGUỒN GỐC</header>
+
+<!-- VERIFY -->
+<div class="container" id="verifySection">
+<h2>Kiểm tra sản phẩm</h2>
+<input id="verifyCode" placeholder="Nhập mã sản phẩm">
+<button class="btn-primary" onclick="verify()">Kiểm tra</button>
+
+<div id="result"></div>
+
+<button class="btn-business" onclick="showLogin()">
+🏢 Doanh nghiệp đăng ký sản phẩm tại đây
+</button>
+</div>
+
+<!-- LOGIN -->
+<div class="container hidden" id="loginSection">
+<h2>Đăng nhập</h2>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+<button class="btn-primary" onclick="login()">Đăng nhập</button>
+<span class="link" onclick="showRegister()">Chưa có tài khoản? Đăng ký</span>
+<span class="link" onclick="showVerify()">← Quay lại</span>
+</div>
+
+<!-- REGISTER -->
+<div class="container hidden" id="registerSection">
+<h2>Đăng ký doanh nghiệp</h2>
+<input id="regCompany" placeholder="Tên công ty">
+<input id="regEmail" placeholder="Email">
+<input id="regPassword" type="password" placeholder="mật khẩu">
+<input id="regConfirmPassword" type="password" placeholder="Xác nhận mật khẩu">
+<button class="btn-primary" onclick="register()">Đăng ký</button>
+<span class="link" onclick="showLogin()">Đã có tài khoản? Đăng nhập</span>
+</div>
+
+<!-- CREATE -->
+<div class="container hidden" id="createSection">
+<h2>Tạo sản phẩm</h2>
+<input id="code" placeholder="Mã sản phẩm">
+<input id="name" placeholder="Tên sản phẩm">
+<input id="origin" placeholder="Xuất xứ">
+<input id="date" type="date">
+<button class="btn-primary" onclick="createProduct()">Tạo sản phẩm</button>
+<span class="link" onclick="logout()">Đăng xuất</span>
+</div>
+
+<script>
+let currentUserId = null;
+
+const verifySection = document.getElementById("verifySection");
+const loginSection = document.getElementById("loginSection");
+const registerSection = document.getElementById("registerSection");
+const createSection = document.getElementById("createSection");
+
+const verifyCode = document.getElementById("verifyCode");
+const resultBox = document.getElementById("result");
+
+function hideAll(){
+    verifySection.classList.add("hidden");
+    loginSection.classList.add("hidden");
+    registerSection.classList.add("hidden");
+    createSection.classList.add("hidden");
+}
+
+function showVerify(){ hideAll(); verifySection.classList.remove("hidden"); }
+function showLogin(){ hideAll(); loginSection.classList.remove("hidden"); }
+function showRegister(){ hideAll(); registerSection.classList.remove("hidden"); }
+function showCreate(){ hideAll(); createSection.classList.remove("hidden"); }
+
+function logout(){
+    currentUserId = null;
+    showVerify();
+}
+
+// ================= VERIFY =================
+async function verify(){
+
+    if(!verifyCode.value.trim()){
+        alert("Nhập mã sản phẩm");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/products/verify/" + encodeURIComponent(verifyCode.value.trim()));
+        const data = await res.json();
+
+        if(data.status === "NOT_FOUND"){
+            resultBox.innerHTML = `<div class="result-box error">❌ Không tìm thấy sản phẩm</div>`;
+        }
+        else if(data.status === "TAMPERED"){
+            resultBox.innerHTML = `<div class="result-box warning">⚠️ SẢN PHẨM BỊ CHỈNH SỬA</div>`;
+        }
+        else if(data.status === "VALID"){
+
+            const p = data.product;
+
+            resultBox.innerHTML = `
+                <div class="result-box success">
+                    <h3>✅ SẢN PHẨM HỢP LỆ</h3>
+                    <p><strong>Mã sản phẩm:</strong> ${p.ProductCode}</p>
+                    <p><strong>Tên sản phẩm:</strong> ${p.ProductName}</p>
+                    <p><strong>Xuất xứ:</strong> ${p.Origin}</p>
+                    <p><strong>Ngày sản xuất:</strong> ${new Date(p.ManufactureDate).toLocaleDateString()}</p>
+                    <p><strong>Công ty:</strong> ${p.CompanyName}</p>
+                </div>
+            `;
+        }
+        else{
+            resultBox.innerHTML = `<div class="result-box error">❌ Lỗi kiểm tra</div>`;
+        }
+
+    }catch(err){
+        alert("Lỗi kiểm tra");
+    }
+}
+
+// ================= REGISTER =================
+async function register(){
+
+    const company = document.getElementById("regCompany").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+    const confirmPassword = document.getElementById("regConfirmPassword").value;
+
+    if(!company || !email || !password || !confirmPassword){
+        alert("Nhập đầy đủ thông tin");
+        return;
+    }
+
+    if(password !== confirmPassword){
+        alert("❌ Mật khẩu xác nhận không khớp!");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/products/register",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({ company, email, password })
+        });
+
+        const data = await res.json();
+
+        if(data.status === "REGISTERED"){
+            alert("Đăng ký thành công");
+            showLogin();
+        }else if(data.status === "EMAIL_EXISTS"){
+            alert("Email đã tồn tại");
+        }else{
+            alert("Đăng ký thất bại");
+        }
+
+    }catch(err){
+        alert("Lỗi server");
+    }
+}
+
+
+// ================= LOGIN =================
+async function login(){
+
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    if(!email || !password){
+        alert("Nhập đầy đủ thông tin");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/products/login",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if(data.status === "SUCCESS"){
+            currentUserId = data.userId;
+            alert("Đăng nhập thành công");
+            showCreate();
+        }else{
+            alert("Sai email hoặc mật khẩu");
+        }
+
+    }catch(err){
+        alert("Lỗi server");
+    }
+}
+
+// ================= CREATE PRODUCT =================
+async function createProduct(){
+
+    if(!currentUserId){
+        alert("Bạn chưa đăng nhập");
+        return;
+    }
+
+    const code = document.getElementById("code").value;
+    const name = document.getElementById("name").value;
+    const origin = document.getElementById("origin").value;
+    const date = document.getElementById("date").value;
+
+    if(!code || !name || !origin || !date){
+        alert("Nhập đầy đủ thông tin");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/products/create",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                userId: currentUserId,
+                code,
+                name,
+                origin,
+                date
+            })
+        });
+
+        const data = await res.json();
+
+        if(data.status === "CREATED"){
+            alert("Tạo sản phẩm thành công");
+        }else{
+            alert("Lỗi tạo sản phẩm");
+        }
+
+    }catch(err){
+        alert("Lỗi server");
+    }
+}
+</script>
+</body>
+</html>
